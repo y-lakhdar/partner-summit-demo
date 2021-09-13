@@ -16,6 +16,7 @@ jobs:
       PROD_API_KEY: ${{secrets.PROD_API_KEY}}
     steps:
       - name: Pull Dev Organization
+      - uses: actions/setup-node@v2
         run: |
           npx @coveo/cli auth:token -e dev -t ${{ secrets.DEV_API_KEY }}
           npx @coveo/cli org:config:pull
@@ -24,12 +25,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Running Tests
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         run: echo "dummy tests"
   push-to-uat:
     needs: test-dev
     runs-on: ubuntu-latest
     steps:
       - name: Push Dev org to UAT
+      - uses: actions/setup-node@v2
         run: |
           npx @coveo/cli auth:token -e dev -t ${{ secrets.PROD_API_KEY }}
           npx @coveo/cli org:config:push --skipPreview --sync
@@ -38,4 +42,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Running Tests
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         run: echo "dummy tests"
