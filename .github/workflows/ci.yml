@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Pull Dev Organization
         run: |
-          npx @coveo/cli auth:token -e dev -t ${{ DEV_API_KEY }}
+          npx @coveo/cli auth:token -e dev -t ${{ secrets.DEV_API_KEY }}
           npx @coveo/cli org:config:pull
   test-dev:
     needs: pull-dev
@@ -31,7 +31,7 @@ jobs:
     steps:
       - name: Push Dev org to UAT
         run: |
-          npx @coveo/cli auth:token -e dev -t ${{ PROD_API_KEY }}
+          npx @coveo/cli auth:token -e dev -t ${{ secrets.PROD_API_KEY }}
           npx @coveo/cli org:config:push --skipPreview --sync
   test-uat:
     needs: push-to-uat
