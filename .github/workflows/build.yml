@@ -1,0 +1,41 @@
+
+name: CI
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+  workflow_dispatch:
+
+jobs:
+  pull-dev:
+    runs-on: ubuntu-latest
+    env:
+      DEV_API_KEY: ${{secrets.DEV_API_KEY}}
+      PROD_API_KEY: ${{secrets.PROD_API_KEY}}
+    steps:
+      - name: Pull Dev Organization
+        run: |
+          npx @coveo/cli auth:token -e dev -t ${{ DEV_API_KEY }}
+          npx @coveo/cli org:config:pull
+  test-dev:
+    needs: pull-dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Running Tests
+        run: echo "dummy tests"
+  push-to-uat:
+    needs: test-dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Push Dev org to UAT
+        run: |
+          npx @coveo/cli auth:token -e dev -t ${{ PROD_API_KEY }}
+          npx @coveo/cli org:config:push --skipPreview --sync
+  test-uat:
+    needs: push-to-uat
+    runs-on: ubuntu-latest
+    steps:
+      - name: Running Tests
+        run: echo "dummy tests"
